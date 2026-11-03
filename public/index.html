@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Launch a Day</title>
+  <meta name="description" content="Ship one small app every day. A daily idea, a four-step plan, a streak, and a feed of what everyone launched.">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="frame top-row">
+      <a href="/" class="brand" data-link><span class="mark" aria-hidden="true">↑</span><span class="brand-text">Launch a Day</span></a>
+      <nav class="nav" id="nav"></nav>
+    </div>
+  </header>
+  <main id="app" class="frame" aria-live="polite"></main>
+  <footer class="frame foot">Ship small. Ship daily. Your streak resets at midnight where you are.</footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
