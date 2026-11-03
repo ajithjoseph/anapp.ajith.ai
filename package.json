@@ -1,0 +1,12 @@
+{
+  "name": "launchaday",
+  "version": "0.1.0",
+  "description": "Launch an app a day: a daily idea, a four-step plan, a streak and a public feed of what everyone shipped.",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  }
+}
