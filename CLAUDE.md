@@ -1,0 +1,56 @@
+# Launch a Day: project guide
+
+> Keep this file current in the same change as the code: it describes how things **are now**. Update `README.md` with it when setup, behaviour or data change.
+
+## What it is
+
+A web app that helps people ship one small app every day: an idea of the day, a four-step plan with a countdown to midnight, streaks, a public feed with upvotes, profiles and a leaderboard. It lives at **https://anapp.ajith.ai**.
+
+This is a **standalone project**. It shares nothing with other repositories: don't copy code, settings or conventions from elsewhere, and don't add references to other projects.
+
+## How it runs
+
+- **No server.** Static files on **GitHub Pages**, the same setup as FamilyTube (tube.ajith.ai, `ajithjoseph/tube.ajith.ai`).
+- **Firebase** does sign-in (Google only) and data (Firestore). The SDK is loaded from `www.gstatic.com` at a pinned version in `js/store.js`.
+- **Security is `firestore.rules`.** Anything the browser sends can be forged, so every rule about who may write what must be in the rules, not only in `app.js`.
+- `config.json` holds the Firebase web settings (public by design). Empty means "not set up": the site still loads, read-only, and says sign-in isn't switched on.
+- Deploy: `.github/workflows/deploy.yml` runs `npm test` on every push and pull request, and on `main` publishes only the site files (`index.html`, `app.js`, `styles.css`, `icon.svg`, `config.json`, `CNAME`, `.nojekyll`, `js/`) plus `404.html` (a copy of `index.html`, so app paths like `/u/ana` load).
+
+## Files
+
+| Path | Role |
+|---|---|
+| `index.html` | Page shell and the Content Security Policy (Pages can't send headers) |
+| `app.js` | All pages and routing (History API: `/`, `/feed`, `/leaderboard`, `/signin`, `/welcome`, `/settings`, `/u/<handle>`) |
+| `styles.css` | Tokens on `:root`, dark mode, layout |
+| `js/store.js` | Every Firebase call. Nothing else imports Firebase |
+| `js/days.js` | Days in a time zone, `addDays`, streaks |
+| `js/ideas.js` | Idea list and `ideaFor(day, offset)` |
+| `firestore.rules` | Who may read and write each collection |
+| `scripts/serve.mjs` | Local server that behaves like Pages (`npm start`) |
+| `test/` | `node --test` unit tests for days, streaks and ideas |
+
+## Data model
+
+`users/{uid}`, `handles/{handle}`, `plans/{uid_day}`, `launches/{uid_day}`, `votes/{launchId_uid}`. The table in `README.md` says what each holds and who may write it.
+
+## Rules and gotchas
+
+- **A "day" is the maker's own date** (`dayIn(profile.tz)`). The rules accept only a day within a day of the server clock (`isCurrentDay`), so streaks can't be backfilled. Don't loosen that.
+- **One launch per maker per day** comes from the document id `uid_day`, not from a query.
+- **Votes:** the vote document and `launches.votes` change in one batch, and the rules check them together (`existsAfter`). Don't update `votes` any other way.
+- **No composite indexes:** queries use a single field and sort in the browser (`since`, `profileByHandle`). Adding `where` plus `orderBy` on different fields needs an index in the Firebase console first.
+- **Usernames** are claimed in the same batch as the profile; the rules refuse a taken one. Changing a username isn't supported.
+- **Never put user text into HTML.** Build DOM with `h()`; the CSP blocks inline scripts and inline style attributes (styles set through `el.style` are fine).
+- Absolute paths (`/app.js`, `/js/…`) are required, because `404.html` serves app paths at any depth.
+- Emails are never stored in Firestore or shown.
+
+## Checks
+
+- `npm test` (unit tests).
+- Browser check before shipping UI changes: run `npm start`, click through sign-in → welcome → plan → launch → profile → streaks at desktop and 390 px width, with no console errors and no sideways scroll. Firebase can be swapped for an in-memory fake by intercepting `/js/store.js` (same exports).
+- `firestore.rules` has no automated tests yet; check changes with the Firebase emulator or the console's Rules Playground.
+
+## Not built yet
+
+Payments, reminder emails, comments and moderation, screenshots on launches, username changes, rules tests.
