@@ -98,13 +98,23 @@ service cloud.firestore {
     }
 
     match /votes/{id} {
+      function launchDoc(launchId) { return /databases/$(database)/documents/launches/$(launchId); }
       allow read: if true;
+      // A vote is only written together with the count going up by one, and
+      // only removed together with the count going down by one. Without this,
+      // a lone vote write followed by a normal un-vote would move the count.
       allow create: if signedIn()
         && request.resource.data.keys().hasOnly(['uid', 'launchId'])
         && request.resource.data.uid == me()
         && id == request.resource.data.launchId + '_' + me()
-        && get(/databases/$(database)/documents/launches/$(request.resource.data.launchId)).data.uid != me();
-      allow delete: if signedIn() && resource.data.uid == me();
+        && get(launchDoc(request.resource.data.launchId)).data.uid != me()
+        && getAfter(launchDoc(request.resource.data.launchId)).data.votes
+             == get(launchDoc(request.resource.data.launchId)).data.votes + 1;
+      // If the launch was taken down, its leftover votes can still be cleared.
+      allow delete: if signedIn() && resource.data.uid == me()
+        && (!exists(launchDoc(resource.data.launchId))
+          || getAfter(launchDoc(resource.data.launchId)).data.votes
+               == get(launchDoc(resource.data.launchId)).data.votes - 1);
       allow update: if false;
     }
   }
