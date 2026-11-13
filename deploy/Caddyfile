@@ -1,6 +1,0 @@
-# Caddy gets and renews the HTTPS certificate for anapp.ajith.ai by itself.
-# Run the app with HOST=127.0.0.1 PORT=3300 SECURE_COOKIES=1 TRUST_PROXY=1.
-anapp.ajith.ai {
-	encode zstd gzip
-	reverse_proxy 127.0.0.1:3300
-}

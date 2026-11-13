@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- GitHub Pages can't send headers, so the policy lives here. Firebase needs
+       gstatic (SDK), apis.google.com (sign-in popup helper), the googleapis
+       endpoints (auth tokens, Firestore) and the project's firebaseapp.com frame. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://apis.google.com; img-src 'self' data: https://*.googleusercontent.com; style-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'">
+  <meta name="referrer" content="same-origin">
   <title>Launch a Day</title>
   <meta name="description" content="Ship one small app every day. A daily idea, a four-step plan, a streak, and a feed of what everyone launched.">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">

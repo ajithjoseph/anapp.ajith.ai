@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { dayIn, addDays, streaks, isDay, validTz } from '../lib/days.js';
-import { ideaFor, IDEAS } from '../lib/ideas.js';
+import { dayIn, addDays, streaks, isDay, validTz } from '../js/days.js';
+import { ideaFor, IDEAS } from '../js/ideas.js';
 
 test('a day is the maker’s own day', () => {
   const t = new Date('2026-11-03T03:30:00Z');
